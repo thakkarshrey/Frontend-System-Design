@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Long Polling Example</title>
+  </head>
+  <body>
+    <h1>Long polling example</h1>
+    <div id="main-container"></div>
+  </body>
+
+  <script>
+    const getData = async (lastData) => {
+      try {
+        const data = await fetch(`/get-data?lastData=${lastData}`);
+        const response = await data.json();
+        if (response && response?.data) {
+          document.getElementById("main-container").innerHTML = response?.data;
+          getData(response?.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getData();
+
+    // You can go and see inside the browser Network tab that initially /get-data is called with undefined which means that data is not equal so it will send response as "Initial data".
+
+    // The api will be called again with "Initial data" in the query and now both the data are equal so the request will be inside pending list array.
+
+    // As you hit /update-data request with new query then the array of pending list will be resolved one by one.
+  </script>
+</html>

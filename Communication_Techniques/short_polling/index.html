@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Short Polling Example</title>
+  </head>
+  <body>
+    <h1>Short polling example</h1>
+    <div id="main-container"></div>
+  </body>
+
+  <script>
+    const getData = async () => {
+      try {
+        const data = await fetch("/get-data");
+        const response = await data.json();
+        console.log(response, "response");
+        if (response && response?.data) {
+          document.getElementById("main-container").innerHTML = response?.data;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getDataAtInterval = (is_short_polling) => {
+      let intervalId;
+      if (is_short_polling) {
+        intervalId = setInterval(() => {
+          getData();
+        }, 5000);
+      } else {
+        getData();
+        clearInterval(intervalId);
+      }
+    };
+
+    let is_short_polling = false;
+
+    getDataAtInterval(is_short_polling);
+
+    // When you navigate to other pages; always make a habit to clear the interval; else it will keep on polling
+  </script>
+</html>
